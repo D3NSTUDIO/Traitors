@@ -7,7 +7,7 @@
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: system-ui, sans-serif; background: #0a0a0a; color: #f0f0f0; min-height: 100vh; }
-.wrap { max-width: 420px; margin: 0 auto; padding: 2rem 1.25rem; }
+.wrap { max-width: 420px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
 
 .hdr { text-align: center; margin-bottom: 2.5rem; }
 .hdr h1 { font-size: 32px; font-weight: 400; letter-spacing: 2px; text-transform: uppercase; color: #e8c97a; }
@@ -15,7 +15,12 @@ body { font-family: system-ui, sans-serif; background: #0a0a0a; color: #f0f0f0; 
 
 .sec-label { font-size: 10px; font-weight: 500; color: #555; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 12px; }
 
-/* BLACK MOON */
+.announce-banner { border-radius: 12px; padding: 1rem 1.1rem; border: 0.5px solid #e8c97a33; background: #130f00; margin-bottom: 2rem; display: none; }
+.announce-banner.show { display: block; }
+.announce-label { font-size: 10px; color: #a89050; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; }
+.announce-text { font-size: 15px; color: #e8c97a; line-height: 1.5; }
+.announce-time { font-size: 11px; color: #555; margin-top: 6px; }
+
 .moon-section { margin-bottom: 2.5rem; }
 .moon-card { border-radius: 14px; padding: 1.4rem 1.2rem; border: 0.5px solid #222; background: #111; margin-bottom: 10px; display: flex; align-items: center; gap: 1rem; }
 .moon-card.tonight { border-color: #e8c97a44; background: #130f00; }
@@ -30,24 +35,81 @@ body { font-family: system-ui, sans-serif; background: #0a0a0a; color: #f0f0f0; 
 .moon-card.tonight .moon-badge { background: #e8c97a22; color: #e8c97a; }
 .moon-card.passed .moon-badge { background: #1a1a1a; color: #444; }
 
-/* PLAYERS */
 .players-section { margin-bottom: 2rem; }
 .player-row { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 0.5px solid #1a1a1a; }
 .player-row:last-child { border-bottom: none; }
 .pav { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 500; color: #fff; flex-shrink: 0; }
 .pav.dead { filter: grayscale(1); opacity: 0.4; }
-.pname { font-size: 15px; font-weight: 400; color: #f0f0f0; flex: 1; }
+.pname { font-size: 15px; color: #f0f0f0; flex: 1; }
 .pname.dead { color: #444; text-decoration: line-through; }
 .pstatus { font-size: 11px; padding: 3px 10px; border-radius: 20px; }
 .pstatus.alive { background: #002e0a; color: #78f5a0; }
 .pstatus.dead { background: #1a1a1a; color: #444; }
+
+.vote-section { margin-bottom: 2rem; }
+.vote-closed { font-size: 13px; color: #555; text-align: center; padding: 1.5rem; border: 0.5px solid #1a1a1a; border-radius: 12px; }
+.vote-name-input { width: 100%; font-size: 14px; padding: 10px 12px; border-radius: 10px; border: 0.5px solid #333; background: #111; color: #f0f0f0; margin-bottom: 10px; font-family: inherit; }
+.vote-name-input::placeholder { color: #555; }
+.vote-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+.vote-btn { padding: 10px 8px; border-radius: 10px; border: 0.5px solid #2a2a2a; background: #111; color: #ccc; font-size: 14px; cursor: pointer; transition: all 0.15s; }
+.vote-btn:hover { border-color: #555; color: #f0f0f0; }
+.vote-btn.selected { border-color: #e8c97a66; background: #1a1400; color: #e8c97a; }
+.vote-btn.dead-opt { opacity: 0.3; pointer-events: none; }
+.submit-vote { width: 100%; padding: 11px; font-size: 14px; font-weight: 500; border-radius: 10px; border: none; background: #e8c97a; color: #0a0a0a; cursor: pointer; }
+.submit-vote:disabled { opacity: 0.4; cursor: not-allowed; }
+.vote-done { text-align: center; padding: 1.2rem; border: 0.5px solid #e8c97a33; border-radius: 12px; background: #130f00; }
+.vote-done p { font-size: 14px; color: #e8c97a; }
+.vote-done small { font-size: 12px; color: #666; margin-top: 4px; display: block; }
+
+.results-section { margin-bottom: 2rem; display: none; }
+.results-section.show { display: block; }
+.result-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 0.5px solid #1a1a1a; }
+.result-row:last-child { border-bottom: none; }
+.result-name { font-size: 14px; color: #f0f0f0; flex: 1; }
+.result-bar-wrap { width: 100px; height: 6px; background: #1e1e1e; border-radius: 3px; overflow: hidden; }
+.result-bar { height: 100%; background: #e8c97a; border-radius: 3px; transition: width 0.4s; }
+.result-count { font-size: 12px; color: #888; min-width: 24px; text-align: right; }
+
+.host-toggle { text-align: center; margin-bottom: 1.5rem; }
+.host-toggle button { font-size: 12px; color: #333; background: none; border: none; cursor: pointer; text-decoration: underline; }
+.host-panel { background: #111; border: 0.5px solid #2a2a2a; border-radius: 14px; padding: 1.2rem; margin-bottom: 2rem; display: none; }
+.host-panel.show { display: block; }
+.host-panel h3 { font-size: 11px; color: #555; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 14px; }
+.host-input { width: 100%; font-size: 14px; padding: 9px 11px; border-radius: 8px; border: 0.5px solid #333; background: #0a0a0a; color: #f0f0f0; font-family: inherit; resize: none; margin-bottom: 8px; }
+.host-row { display: flex; gap: 8px; margin-bottom: 16px; }
+.host-btn { flex: 1; padding: 9px; font-size: 13px; border-radius: 8px; border: 0.5px solid #333; background: transparent; color: #ccc; cursor: pointer; }
+.host-btn.primary { background: #e8c97a; color: #0a0a0a; border-color: #e8c97a; font-weight: 500; }
+.host-btn:hover { background: #1a1a1a; }
+.host-btn.primary:hover { opacity: 0.85; background: #e8c97a; }
+.host-sep { border: none; border-top: 0.5px solid #222; margin: 14px 0; }
+.host-player-row { display: flex; align-items: center; gap: 10px; padding: 6px 0; }
+.host-player-name { font-size: 14px; color: #ccc; flex: 1; }
+.elim-btn { font-size: 12px; padding: 4px 12px; border-radius: 20px; border: 0.5px solid #333; background: transparent; color: #888; cursor: pointer; }
+.elim-btn:hover { border-color: #f5a0a066; color: #f5a0a0; background: #3c0a0a; }
+.elim-btn.dead-state { border-color: #78f5a066; color: #78f5a0; }
+.elim-btn.dead-state:hover { background: #0a3a1a; border-color: #78f5a066; color: #78f5a0; }
+.toggle-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.toggle-row label { font-size: 13px; color: #ccc; flex: 1; }
+.tog { position: relative; width: 40px; height: 22px; flex-shrink: 0; }
+.tog input { opacity: 0; width: 0; height: 0; }
+.tog-slider { position: absolute; inset: 0; background: #333; border-radius: 22px; cursor: pointer; transition: 0.2s; }
+.tog-slider:before { content: ''; position: absolute; width: 16px; height: 16px; left: 3px; top: 3px; background: #888; border-radius: 50%; transition: 0.2s; }
+input:checked + .tog-slider { background: #e8c97a33; }
+input:checked + .tog-slider:before { transform: translateX(18px); background: #e8c97a; }
 </style>
 </head>
 <body>
 <div class="wrap">
+
   <div class="hdr">
     <h1>The Traitors</h1>
     <p>Who can you trust?</p>
+  </div>
+
+  <div class="announce-banner" id="announce-banner">
+    <div class="announce-label">Host announcement</div>
+    <div class="announce-text" id="announce-text"></div>
+    <div class="announce-time" id="announce-time"></div>
   </div>
 
   <div class="moon-section">
@@ -59,31 +121,76 @@ body { font-family: system-ui, sans-serif; background: #0a0a0a; color: #f0f0f0; 
     <div class="sec-label">Players</div>
     <div id="player-list"></div>
   </div>
+
+  <div class="vote-section">
+    <div class="sec-label">Suspicion vote</div>
+    <div id="vote-area"></div>
+  </div>
+
+  <div class="results-section" id="results-section">
+    <div class="sec-label">Vote results</div>
+    <div id="results-list"></div>
+  </div>
+
+  <div class="host-toggle">
+    <button onclick="toggleHostPanel()">host access</button>
+  </div>
+
+  <div class="host-panel" id="host-panel">
+    <h3>Host controls</h3>
+
+    <div class="toggle-row">
+      <label>Suspicion vote open</label>
+      <label class="tog"><input type="checkbox" id="tog-vote" onchange="setVoteOpen(this.checked)"><span class="tog-slider"></span></label>
+    </div>
+    <div class="toggle-row">
+      <label>Show results to players</label>
+      <label class="tog"><input type="checkbox" id="tog-results" onchange="setShowResults(this.checked)"><span class="tog-slider"></span></label>
+    </div>
+
+    <hr class="host-sep" />
+
+    <textarea class="host-input" id="announce-input" rows="3" placeholder="Type an announcement..."></textarea>
+    <div class="host-row">
+      <button class="host-btn primary" onclick="sendAnnouncement()">Send</button>
+      <button class="host-btn" onclick="clearAnnouncement()">Clear</button>
+    </div>
+
+    <hr class="host-sep" />
+
+    <div style="font-size:11px;color:#555;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;">Eliminate / revive</div>
+    <div id="host-players"></div>
+
+    <hr class="host-sep" />
+    <button class="host-btn" style="width:100%" onclick="clearVotes()">Clear all votes</button>
+  </div>
+
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
+const SUPABASE_URL  = 'https://ykxmtanmxmdoenilyoya.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlreG10YW5teG1kb2VuaWx5b3lhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1NTkwMDIsImV4cCI6MjA5MjEzNTAwMn0.yME64N-xNRWkUA1u6KO-WMmFU3f30havSuf98l4w4u0';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
 const BLACK_MOON = [
   new Date('2026-04-20T20:00:00'),
   new Date('2026-04-21T20:00:00'),
 ];
 
-const PLAYERS = [
-  { name: 'Renna',     color: '#1a3a5c', dead: false },
-  { name: 'Joseph',   color: '#1a3a1a', dead: false },
-  { name: 'Noah',  color: '#3a1a1a', dead: false },
-  { name: 'Alyessa',  color: '#2a1a3a', dead: false },
-  { name: 'Hanna',     color: '#3a2a00', dead: false },
-  { name: 'JKD',     color: '#1a2a3a', dead: false },
-  { name: 'Thomas', color: '#3a001a', dead: false },
-  { name: 'Benji', color: '#1a3a2a', dead: false },
-];
+let players     = [];
+let gameState   = { announcement: '', announcement_time: null, vote_open: false, show_results: false };
+let votes       = {};
+let isHost      = false;
+let myVote      = null;
+let myName      = null;
+let selectedVote = null;
 
-function initials(n) { return n.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase(); }
+function initials(n) { return n.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase(); }
 
 function moonStatus(d) {
-  const n = new Date();
-  const s = new Date(d); s.setHours(0,0,0,0);
-  const e = new Date(d); e.setHours(23,59,59,999);
+  const n = new Date(), s = new Date(d), e = new Date(d);
+  s.setHours(0,0,0,0); e.setHours(23,59,59,999);
   if (n > e) return 'passed';
   if (n >= s) return 'tonight';
   return 'upcoming';
@@ -92,24 +199,23 @@ function moonStatus(d) {
 function countdown(d) {
   const diff = d - new Date();
   if (diff <= 0) return null;
-  const totalMins = Math.floor(diff / 60000);
-  const days = Math.floor(totalMins / 1440);
-  const hrs  = Math.floor((totalMins % 1440) / 60);
-  const mins = totalMins % 60;
-  if (days > 0) return days + 'd ' + hrs + 'h away';
-  return hrs + 'h ' + mins + 'm away';
+  const m = Math.floor(diff/60000), h = Math.floor(m/60), days = Math.floor(h/24);
+  if (days > 0) return days + 'd ' + (h%24) + 'h away';
+  return h + 'h ' + (m%60) + 'm away';
+}
+
+function fmtTime(ts) {
+  if (!ts) return '';
+  return new Date(ts).toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' });
 }
 
 function renderMoon() {
   const labels = ['Monday 20 Apr', 'Tuesday 21 Apr'];
-  document.getElementById('moon-wrap').innerHTML = BLACK_MOON.map((d, i) => {
+  document.getElementById('moon-wrap').innerHTML = BLACK_MOON.map((d,i) => {
     const st = moonStatus(d);
-    const cd = countdown(d);
-    const icon = st === 'tonight' ? '🌑' : st === 'passed' ? '🌒' : '🌘';
-    const badge = st === 'passed' ? 'Passed' : st === 'tonight' ? 'Active tonight' : cd;
-    const desc = st === 'tonight'
-      ? 'The Jester is out — can the Inquisitor stop them?'
-      : 'The Jester causes mischief unless stopped by the Inquisitor';
+    const icon = st==='tonight' ? '🌑' : st==='passed' ? '🌒' : '🌘';
+    const badge = st==='passed' ? 'Passed' : st==='tonight' ? 'Active tonight' : countdown(d);
+    const desc = st==='tonight' ? 'The Jester is out — can the Inquisitor stop them?' : 'The Jester causes mischief unless stopped by the Inquisitor';
     return `<div class="moon-card ${st}">
       <div class="moon-icon">${icon}</div>
       <div class="moon-info">
@@ -122,18 +228,192 @@ function renderMoon() {
 }
 
 function renderPlayers() {
-  document.getElementById('player-list').innerHTML = PLAYERS.map(p => `
+  document.getElementById('player-list').innerHTML = players.map(p => `
     <div class="player-row">
-      <div class="pav ${p.dead ? 'dead' : ''}" style="background:${p.color}">${initials(p.name)}</div>
-      <div class="pname ${p.dead ? 'dead' : ''}">${p.name}</div>
-      <span class="pstatus ${p.dead ? 'dead' : 'alive'}">${p.dead ? 'eliminated' : 'alive'}</span>
-    </div>
-  `).join('');
+      <div class="pav ${p.dead?'dead':''}" style="background:${p.color}">${initials(p.name)}</div>
+      <div class="pname ${p.dead?'dead':''}">${p.name}</div>
+      <span class="pstatus ${p.dead?'dead':'alive'}">${p.dead?'eliminated':'alive'}</span>
+    </div>`).join('');
 }
 
-renderMoon();
-renderPlayers();
+function renderAnnouncement() {
+  const banner = document.getElementById('announce-banner');
+  if (gameState.announcement && gameState.announcement.trim()) {
+    document.getElementById('announce-text').textContent = gameState.announcement;
+    document.getElementById('announce-time').textContent = fmtTime(gameState.announcement_time);
+    banner.classList.add('show');
+  } else {
+    banner.classList.remove('show');
+  }
+}
+
+function renderVote() {
+  const area = document.getElementById('vote-area');
+  if (!gameState.vote_open) {
+    area.innerHTML = '<div class="vote-closed">No vote active right now.</div>';
+    return;
+  }
+  if (myVote) {
+    area.innerHTML = `<div class="vote-done"><p>You voted for <strong>${myVote}</strong></p><small>Waiting for results...</small></div>`;
+    return;
+  }
+  const alive = players.filter(p => !p.dead);
+  area.innerHTML = `
+    <input class="vote-name-input" id="voter-name" placeholder="Your name..." />
+    <div class="vote-grid">${alive.map(p =>
+      `<button class="vote-btn" onclick="selectVoteTarget('${p.name}',this)">${p.name}</button>`
+    ).join('')}</div>
+    <button class="submit-vote" id="submit-btn" onclick="submitVote()" disabled>Cast vote</button>`;
+  document.getElementById('voter-name').addEventListener('input', checkVoteReady);
+}
+
+function selectVoteTarget(name, btn) {
+  document.querySelectorAll('.vote-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedVote = name;
+  checkVoteReady();
+}
+
+function checkVoteReady() {
+  const n = document.getElementById('voter-name');
+  const btn = document.getElementById('submit-btn');
+  if (n && btn) btn.disabled = !(n.value.trim() && selectedVote);
+}
+
+async function submitVote() {
+  const nameEl = document.getElementById('voter-name');
+  if (!nameEl || !nameEl.value.trim() || !selectedVote) return;
+  myName = nameEl.value.trim();
+  myVote = selectedVote;
+  await sb.from('votes').upsert({ voter_name: myName, voted_for: myVote }, { onConflict: 'voter_name' });
+  renderVote();
+}
+
+function renderResults() {
+  const sec = document.getElementById('results-section');
+  const show = isHost || gameState.show_results;
+  if (!show || Object.keys(votes).length === 0) { sec.classList.remove('show'); return; }
+  sec.classList.add('show');
+  const tally = {};
+  players.forEach(p => tally[p.name] = 0);
+  Object.values(votes).forEach(v => { if (tally[v] !== undefined) tally[v]++; });
+  const max = Math.max(...Object.values(tally), 1);
+  document.getElementById('results-list').innerHTML = Object.entries(tally)
+    .sort((a,b) => b[1]-a[1])
+    .map(([name, count]) => `
+      <div class="result-row">
+        <div class="result-name">${name}</div>
+        <div class="result-bar-wrap"><div class="result-bar" style="width:${Math.round(count/max*100)}%"></div></div>
+        <div class="result-count">${count}</div>
+      </div>`).join('');
+}
+
+function renderHostControls() {
+  document.getElementById('tog-vote').checked    = gameState.vote_open;
+  document.getElementById('tog-results').checked = gameState.show_results;
+  document.getElementById('host-players').innerHTML = players.map((p,i) => `
+    <div class="host-player-row">
+      <div class="pav" style="background:${p.color};width:28px;height:28px;font-size:11px;">${initials(p.name)}</div>
+      <div class="host-player-name">${p.name}</div>
+      <button class="elim-btn ${p.dead?'dead-state':''}" onclick="toggleDead(${p.id},${p.dead})">${p.dead?'Revive':'Eliminate'}</button>
+    </div>`).join('');
+}
+
+function renderAll() {
+  renderMoon();
+  renderPlayers();
+  renderAnnouncement();
+  renderVote();
+  renderResults();
+  if (isHost) renderHostControls();
+}
+
+async function toggleHostPanel() {
+  if (!isHost) {
+    const pw = prompt('Host password:');
+    if (pw !== 'traitors2026') { alert('Wrong password.'); return; }
+    isHost = true;
+  } else {
+    isHost = false;
+  }
+  document.getElementById('host-panel').classList.toggle('show', isHost);
+  if (isHost) renderHostControls();
+}
+
+async function sendAnnouncement() {
+  const txt = document.getElementById('announce-input').value.trim();
+  if (!txt) return;
+  await sb.from('game_state').update({ announcement: txt, announcement_time: new Date().toISOString() }).eq('id', 1);
+  document.getElementById('announce-input').value = '';
+}
+
+async function clearAnnouncement() {
+  await sb.from('game_state').update({ announcement: '', announcement_time: null }).eq('id', 1);
+}
+
+async function setVoteOpen(val) {
+  await sb.from('game_state').update({ vote_open: val }).eq('id', 1);
+}
+
+async function setShowResults(val) {
+  await sb.from('game_state').update({ show_results: val }).eq('id', 1);
+}
+
+async function toggleDead(id, currentDead) {
+  await sb.from('players').update({ dead: !currentDead }).eq('id', id);
+}
+
+async function clearVotes() {
+  await sb.from('votes').delete().neq('id', 0);
+  votes = {};
+  myVote = null;
+  myName = null;
+  selectedVote = null;
+  renderVote();
+  renderResults();
+}
+
+async function loadAll() {
+  const [{ data: p }, { data: g }, { data: v }] = await Promise.all([
+    sb.from('players').select('*').order('id'),
+    sb.from('game_state').select('*').eq('id', 1).single(),
+    sb.from('votes').select('*'),
+  ]);
+  players   = p || [];
+  gameState = g || gameState;
+  votes     = {};
+  (v || []).forEach(row => votes[row.voter_name] = row.voted_for);
+  renderAll();
+}
+
+function subscribeRealtime() {
+  sb.channel('traitors-realtime')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'players' }, async () => {
+      const { data } = await sb.from('players').select('*').order('id');
+      players = data || [];
+      renderPlayers();
+      if (isHost) renderHostControls();
+    })
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'game_state' }, async () => {
+      const { data } = await sb.from('game_state').select('*').eq('id', 1).single();
+      gameState = data || gameState;
+      renderAnnouncement();
+      renderVote();
+      renderResults();
+      if (isHost) renderHostControls();
+    })
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'votes' }, async () => {
+      const { data } = await sb.from('votes').select('*');
+      votes = {};
+      (data || []).forEach(row => votes[row.voter_name] = row.voted_for);
+      renderResults();
+    })
+    .subscribe();
+}
+
 setInterval(renderMoon, 60000);
+loadAll();
+subscribeRealtime();
 </script>
 </body>
 </html>
