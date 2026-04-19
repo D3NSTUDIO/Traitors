@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The Traitors</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: system-ui, sans-serif; background: #0a0a0a; color: #f0f0f0; min-height: 100vh; }
+.wrap { max-width: 420px; margin: 0 auto; padding: 2rem 1.25rem; }
+
+.hdr { text-align: center; margin-bottom: 2.5rem; }
+.hdr h1 { font-size: 32px; font-weight: 400; letter-spacing: 2px; text-transform: uppercase; color: #e8c97a; }
+.hdr p { font-size: 12px; color: #555; margin-top: 6px; letter-spacing: 0.1em; text-transform: uppercase; }
+
+.sec-label { font-size: 10px; font-weight: 500; color: #555; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 12px; }
+
+/* BLACK MOON */
+.moon-section { margin-bottom: 2.5rem; }
+.moon-card { border-radius: 14px; padding: 1.4rem 1.2rem; border: 0.5px solid #222; background: #111; margin-bottom: 10px; display: flex; align-items: center; gap: 1rem; }
+.moon-card.tonight { border-color: #e8c97a44; background: #130f00; }
+.moon-card.passed { opacity: 0.4; }
+.moon-icon { font-size: 30px; flex-shrink: 0; }
+.moon-info { flex: 1; }
+.moon-date { font-size: 15px; font-weight: 500; color: #f0f0f0; }
+.moon-card.tonight .moon-date { color: #e8c97a; }
+.moon-desc { font-size: 12px; color: #666; margin-top: 3px; }
+.moon-card.tonight .moon-desc { color: #a89050; }
+.moon-badge { display: inline-block; margin-top: 8px; font-size: 11px; padding: 3px 10px; border-radius: 20px; background: #1e1e1e; color: #888; }
+.moon-card.tonight .moon-badge { background: #e8c97a22; color: #e8c97a; }
+.moon-card.passed .moon-badge { background: #1a1a1a; color: #444; }
+
+/* PLAYERS */
+.players-section { margin-bottom: 2rem; }
+.player-row { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 0.5px solid #1a1a1a; }
+.player-row:last-child { border-bottom: none; }
+.pav { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 500; color: #fff; flex-shrink: 0; }
+.pav.dead { filter: grayscale(1); opacity: 0.4; }
+.pname { font-size: 15px; font-weight: 400; color: #f0f0f0; flex: 1; }
+.pname.dead { color: #444; text-decoration: line-through; }
+.pstatus { font-size: 11px; padding: 3px 10px; border-radius: 20px; }
+.pstatus.alive { background: #002e0a; color: #78f5a0; }
+.pstatus.dead { background: #1a1a1a; color: #444; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hdr">
+    <h1>The Traitors</h1>
+    <p>Who can you trust?</p>
+  </div>
+
+  <div class="moon-section">
+    <div class="sec-label">Black Moon</div>
+    <div id="moon-wrap"></div>
+  </div>
+
+  <div class="players-section">
+    <div class="sec-label">Players</div>
+    <div id="player-list"></div>
+  </div>
+</div>
+
+<script>
+const BLACK_MOON = [
+  new Date('2026-04-20T20:00:00'),
+  new Date('2026-04-21T20:00:00'),
+];
+
+const PLAYERS = [
+  { name: 'Renna',     color: '#1a3a5c', dead: false },
+  { name: 'Joseph',   color: '#1a3a1a', dead: false },
+  { name: 'Noah',  color: '#3a1a1a', dead: false },
+  { name: 'Alyessa',  color: '#2a1a3a', dead: false },
+  { name: 'Hanna',     color: '#3a2a00', dead: false },
+  { name: 'JKD',     color: '#1a2a3a', dead: false },
+  { name: 'Thomas', color: '#3a001a', dead: false },
+  { name: 'Benji', color: '#1a3a2a', dead: false },
+];
+
+function initials(n) { return n.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase(); }
+
+function moonStatus(d) {
+  const n = new Date();
+  const s = new Date(d); s.setHours(0,0,0,0);
+  const e = new Date(d); e.setHours(23,59,59,999);
+  if (n > e) return 'passed';
+  if (n >= s) return 'tonight';
+  return 'upcoming';
+}
+
+function countdown(d) {
+  const diff = d - new Date();
+  if (diff <= 0) return null;
+  const totalMins = Math.floor(diff / 60000);
+  const days = Math.floor(totalMins / 1440);
+  const hrs  = Math.floor((totalMins % 1440) / 60);
+  const mins = totalMins % 60;
+  if (days > 0) return days + 'd ' + hrs + 'h away';
+  return hrs + 'h ' + mins + 'm away';
+}
+
+function renderMoon() {
+  const labels = ['Monday 20 Apr', 'Tuesday 21 Apr'];
+  document.getElementById('moon-wrap').innerHTML = BLACK_MOON.map((d, i) => {
+    const st = moonStatus(d);
+    const cd = countdown(d);
+    const icon = st === 'tonight' ? '🌑' : st === 'passed' ? '🌒' : '🌘';
+    const badge = st === 'passed' ? 'Passed' : st === 'tonight' ? 'Active tonight' : cd;
+    const desc = st === 'tonight'
+      ? 'The Jester is out — can the Inquisitor stop them?'
+      : 'The Jester causes mischief unless stopped by the Inquisitor';
+    return `<div class="moon-card ${st}">
+      <div class="moon-icon">${icon}</div>
+      <div class="moon-info">
+        <div class="moon-date">${labels[i]}</div>
+        <div class="moon-desc">${desc}</div>
+        <div class="moon-badge">${badge}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderPlayers() {
+  document.getElementById('player-list').innerHTML = PLAYERS.map(p => `
+    <div class="player-row">
+      <div class="pav ${p.dead ? 'dead' : ''}" style="background:${p.color}">${initials(p.name)}</div>
+      <div class="pname ${p.dead ? 'dead' : ''}">${p.name}</div>
+      <span class="pstatus ${p.dead ? 'dead' : 'alive'}">${p.dead ? 'eliminated' : 'alive'}</span>
+    </div>
+  `).join('');
+}
+
+renderMoon();
+renderPlayers();
+setInterval(renderMoon, 60000);
+</script>
+</body>
+</html>
